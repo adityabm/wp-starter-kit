@@ -1,0 +1,32 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "8080:80" # Maps port 8080 on your local machine to port 80 in the container
+    environment:
+      WORDPRESS_DB_HOST: db:3306 # Name of the database service (container)
+      WORDPRESS_DB_NAME: wyndham
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: admin
+      FS_METHOD: "direct"
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - wordpress_data:/var/www/html # Persist WordPress data
+      - ./files.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./wp-config.php:/var/www/html/wp-config.php
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: wyndham
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - db_data:/var/lib/mysql # Persist database data
+
+volumes:
+  wordpress_data:
+  db_data:
